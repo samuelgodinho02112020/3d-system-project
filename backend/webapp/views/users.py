@@ -1,33 +1,26 @@
-from crypt import methods
 from webapp import app
+from webapp import bcrypt
 from webapp.models.users import Users
 from flask import request
 from webapp import db
-from apiflask import APIFlask
-from flask_jwt_extended import create_access_token, set_access_cookies, jwt_required, get_jwt_identity
 from flask import jsonify, request
 from flask_bcrypt import Bcrypt
-import random
-
 
 @app.route('/users', methods=['get'])
 def getUsers():
-    print("hello world !!!")
-    final_users = []
-    users = Users.query.all()
-    for i in users:
-        temp = {}
-        temp["id"] = i.id
-        temp["name"] = i.email
-        final_users.append(temp)
-    return jsonify(final_users) 
+    users = []
+    fetched_users = Users.query.all()
+    for user in fetched_users:
+        user_object = {}
+        user_object["id"] = i.id
+        user_object["name"] = i.email
+        users.append(user_object)
+    return jsonify(users) 
 
 
 @app.route('/user/add', methods=['POST'])
-def addUser(): 
-    bcrypt = Bcrypt(app)
+def addUser():
     data = request.get_json()
-    print(data)
     final_name = data['name']
     users = Users.query.all()
     user = Users.query.filter(Users.name == final_name).first()
@@ -54,7 +47,7 @@ def deleteUser():
     print(id)
     Users.query.filter_by(id=id).delete()
     db.session.commit()
-       
+    
     return "sucess delete"
 
 
